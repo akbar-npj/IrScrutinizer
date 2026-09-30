@@ -474,6 +474,38 @@
                             </resources>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>copy-linux-aarch64-so</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/Linux-aarch64</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/native/Linux-aarch64</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-linux-arm64-so</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/Linux-arm64</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/native/Linux-arm64</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>

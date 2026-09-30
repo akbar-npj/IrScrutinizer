@@ -53,8 +53,9 @@ This library is used to access `/dev/lirc`-hardware. It is used by the Linux ver
                     
 
 The subdirectories `native/Linux-amd64`,
-                        `native/Linux-i386`, and
-                        `native/Linux-arm` contain compiled versions for the x86_64, x86_32, and ARM processors respectively.
+                        `native/Linux-i386`,
+                        `native/Linux-arm`, and
+                        `native/Linux-aarch64` (also available as `native/Linux-arm64`) contain compiled versions for the x86_64, x86_32, ARM 32-bit, and ARM 64-bit processors respectively (compatible with both 4k and 16k page sizes).
 
 The package can be downloaded, and the Java part built, by the script
                         `common/scripts/build-harctoolbox-project.sh` using the argument `DevSlashLirc`

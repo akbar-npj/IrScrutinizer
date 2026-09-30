@@ -33,6 +33,8 @@ Installation from sources, including installation of the dependencies, is covere
 appendix of the manual `IrScutinizer.html`,
 also available directly as [BUILD.md](https://github.com/bengtmartensson/IrScrutinizer/blob/master/BUILD.md).
 
+For **ARM64 (`aarch64` / `arm64`)** instructions for **Fedora** and **Debian** (compatible with both 4K and 16K page kernels, such as Fedora Asahi Remix), see [ARM64_GUIDE.md](ARM64_GUIDE.md).
+
 ## Roadmap
 
 A roadmap for the future development is available [in the ROADMAP](ROADMAP.md).

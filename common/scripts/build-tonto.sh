@@ -2,7 +2,7 @@
 git clone https://github.com/stewartoallen/tonto
 cd tonto
 git checkout be1657a
-sed -i -e '/signjar/d' -e 's/<javac/<javac source="1.6" target="1.6"/' build.xml
+sed -i -e '/signjar/d' -e 's/<javac/<javac source="1.8" target="1.8"/' build.xml
 ant all
 mvn install:install-file \
     -DgroupId=com.mrallen \

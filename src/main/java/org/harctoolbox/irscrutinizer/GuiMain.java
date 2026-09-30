@@ -152,15 +152,29 @@ public final class GuiMain extends javax.swing.JFrame {
     private final static Locale namesLocale = Locale.getDefault();
 
     private static File libraryFileName(String appHome, String libraryName) {
-        String subFolderName = (System.getProperty("os.name").startsWith("Windows")
+        String arch = System.getProperty("os.arch").toLowerCase(Locale.US);
+        String os = System.getProperty("os.name").startsWith("Windows")
                 ? "Windows"
-                : System.getProperty("os.name"))
-                + '-' + System.getProperty("os.arch").toLowerCase(Locale.US);
+                : System.getProperty("os.name");
         String stem = System.getProperty("harctoolbox.jniLibsHome") != null
                 ? System.getProperty("harctoolbox.jniLibsHome")
                 : appHome;
         String mappedName = System.mapLibraryName(libraryName);
-        return new File(new File(stem, subFolderName), mappedName);
+        File file = new File(new File(stem, os + '-' + arch), mappedName);
+        if (!file.exists()) {
+            if (arch.equals("aarch64")) {
+                File altFile = new File(new File(stem, os + "-arm64"), mappedName);
+                if (altFile.exists()) {
+                    return altFile;
+                }
+            } else if (arch.equals("arm64")) {
+                File altFile = new File(new File(stem, os + "-aarch64"), mappedName);
+                if (altFile.exists()) {
+                    return altFile;
+                }
+            }
+        }
+        return file;
     }
 
     private static int csvNumberbaseIndex2numberbase(int index) {
