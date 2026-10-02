@@ -77,6 +77,29 @@ Normally, this component is downloaded and installed automatically by Maven.
                         Using the option `-n` to the script (see `.travis.yml` for an example),
                         the script will not try to build and install the shared library.
 
+## Automated Build (build.sh)
+An automated build script, `build.sh`, is provided in the repository root to automate dependency resolution, compilation, test execution, packaging, and Linux package generation.
+
+
+    
+                    # Standard build: compile, execute test suite, and package
+                    ./build.sh
+
+                    # Run unit test suite only
+                    ./build.sh --test-only
+
+                    # Build everything and generate Linux distribution packages (RPM and DEB)
+                    ./build.sh --packages
+
+                    # Force check and build of all dependent harctoolbox libraries
+                    ./build.sh --deps
+
+                    # Clean and quick build (skipping tests)
+                    ./build.sh --clean --quick
+
+                    # Display all options
+                    ./build.sh --help
+                
 ## Building
 The [Maven](https://maven.apache.org/index.html) "software
                     project management and comprehension tool" is used as building system.

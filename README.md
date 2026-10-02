@@ -29,9 +29,14 @@ API documentation is found [here](https://bengtmartensson.github.io/IrScrutinize
 
 ## Installation
 
-Installation from sources, including installation of the dependencies, is covered in detail in the
+For quick automated compilation, testing, and packaging, run:
+```bash
+./build.sh
+```
+
+Detailed installation from sources, including dependency setup and build options, is covered in the
 appendix of the manual `IrScutinizer.html`,
-also available directly as [BUILD.md](https://github.com/bengtmartensson/IrScrutinizer/blob/master/BUILD.md).
+also available directly as [BUILD.md](BUILD.md).
 
 For **ARM64 (`aarch64` / `arm64`)** instructions for **Fedora** and **Debian** (compatible with both 4K and 16K page kernels, such as Fedora Asahi Remix), see [ARM64_GUIDE.md](ARM64_GUIDE.md).
 

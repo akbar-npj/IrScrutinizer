@@ -50,6 +50,26 @@ sudo ./setup-irscrutinizer.sh
 
 ## 3. Compiling from Source
 
+### Automated Build & Test (`build.sh`) — Recommended
+
+IrScrutinizer provides an automated build script `build.sh` in the repository root. It handles dependency resolution, native library verification, compilation, test execution, packaging, and package generation with a single command:
+
+```bash
+# Compile, execute test suite, and package fat JAR & binary distribution:
+./build.sh
+
+# Build everything including Fedora (.rpm) and Debian (.deb) packages:
+./build.sh --packages
+
+# Run unit and integration tests only:
+./build.sh --test-only
+
+# Rebuild all dependencies and IrScrutinizer:
+./build.sh --deps
+```
+
+---
+
 ### Step 3.1: Install Build Dependencies
 
 #### On Fedora / Asahi Linux:

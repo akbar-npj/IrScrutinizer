@@ -1914,6 +1914,29 @@ module is then accessed using the UDP text mode.</p>
                 </section>
             </section>
             <section>
+                <title>Automated Build (build.sh)</title>
+                <p>An automated build script, <code>build.sh</code>, is provided in the repository root to automate dependency resolution, compilation, test execution, packaging, and Linux package generation.</p>
+                <source>
+                    # Standard build: compile, execute test suite, and package
+                    ./build.sh
+
+                    # Run unit test suite only
+                    ./build.sh --test-only
+
+                    # Build everything and generate Linux distribution packages (RPM and DEB)
+                    ./build.sh --packages
+
+                    # Force check and build of all dependent harctoolbox libraries
+                    ./build.sh --deps
+
+                    # Clean and quick build (skipping tests)
+                    ./build.sh --clean --quick
+
+                    # Display all options
+                    ./build.sh --help
+                </source>
+            </section>
+            <section>
                 <title>Building</title>
                 <p>The <a href="https://maven.apache.org/index.html">Maven</a> "software
                     project management and comprehension tool" is used as building system.
