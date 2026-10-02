@@ -29,8 +29,13 @@ mkdir -p "${STAGING_DIR}/usr/share/mime/packages"
 mkdir -p "${STAGING_DIR}/usr/share/metainfo"
 mkdir -p "${STAGING_DIR}/usr/lib/udev/rules.d"
 
-# Unpack binary distribution to staging
-BIN_ZIP="$(ls -1 "${TOP_DIR}/target"/IrScrutinizer-*-bin.zip | head -n 1)"
+# Unpack binary distribution to staging (select by newest timestamp if multiple packages exist)
+BIN_ZIP="$(ls -1t "${TOP_DIR}/target"/IrScrutinizer-*-bin.zip 2>/dev/null | head -n 1)"
+if [ -z "${BIN_ZIP}" ] || [ ! -f "${BIN_ZIP}" ]; then
+    echo "Error: No IrScrutinizer-*-bin.zip found in target/" >&2
+    exit 1
+fi
+echo "Using binary package (newest by timestamp): ${BIN_ZIP}"
 unzip -q "${BIN_ZIP}" -d "${STAGING_DIR}/usr/share/irscrutinizer"
 
 # Create symlinks in /usr/bin

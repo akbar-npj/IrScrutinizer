@@ -52,7 +52,7 @@ sudo ./setup-irscrutinizer.sh
 
 ### Automated Build & Test (`build.sh`) — Recommended
 
-IrScrutinizer provides an automated build script `build.sh` in the repository root. It handles dependency resolution, native library verification, compilation, test execution, packaging, and package generation with a single command:
+IrScrutinizer provides an automated build script `build.sh` in the repository root. It handles dependency resolution, native library verification, compilation, test execution, packaging, and package generation with a single command. If older packages or multiple builds are present in `target/` or `target/packages/`, `build.sh` automatically selects the package by newest modification timestamp.
 
 ```bash
 # Compile, execute test suite, and package fat JAR & binary distribution:

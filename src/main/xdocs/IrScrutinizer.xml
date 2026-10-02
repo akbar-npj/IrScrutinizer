@@ -1915,7 +1915,7 @@ module is then accessed using the UDP text mode.</p>
             </section>
             <section>
                 <title>Automated Build (build.sh)</title>
-                <p>An automated build script, <code>build.sh</code>, is provided in the repository root to automate dependency resolution, compilation, test execution, packaging, and Linux package generation.</p>
+                <p>An automated build script, <code>build.sh</code>, is provided in the repository root to automate dependency resolution, compilation, test execution, packaging, and Linux package generation. When multiple builds or older packages are present in the output directory, the script automatically selects the package by newest modification timestamp.</p>
                 <source>
                     # Standard build: compile, execute test suite, and package
                     ./build.sh

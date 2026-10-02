@@ -78,7 +78,7 @@ Normally, this component is downloaded and installed automatically by Maven.
                         the script will not try to build and install the shared library.
 
 ## Automated Build (build.sh)
-An automated build script, `build.sh`, is provided in the repository root to automate dependency resolution, compilation, test execution, packaging, and Linux package generation.
+An automated build script, `build.sh`, is provided in the repository root to automate dependency resolution, compilation, test execution, packaging, and Linux package generation. When multiple builds or older packages are present in the output directory, the script automatically selects the package by newest modification timestamp.
 
 
     

@@ -42,6 +42,32 @@ log_error() {
     echo -e "${COLOR_RED}[ERROR]${COLOR_RESET} $*" >&2
 }
 
+# Helper: select newest file matching pattern based on modification timestamp (mtime)
+select_newest_package() {
+    local pattern="$1"
+    local desc="${2:-package}"
+
+    shopt -s nullglob
+    local files=( ${pattern} )
+    shopt -u nullglob
+
+    if [ ${#files[@]} -eq 0 ]; then
+        echo ""
+        return 0
+    fi
+
+    local sorted=()
+    while IFS= read -r file; do
+        [ -n "$file" ] && sorted+=("$file")
+    done < <(ls -1t "${files[@]}" 2>/dev/null)
+
+    local newest="${sorted[0]}"
+    if [ ${#sorted[@]} -gt 1 ]; then
+        log_info "Multiple ${desc} files found (${#sorted[@]}). Selected newest by timestamp: $(basename "${newest}")" >&2
+    fi
+    echo "${newest}"
+}
+
 # --- Directory setup ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TOP_DIR="${SCRIPT_DIR}"
@@ -71,6 +97,8 @@ Usage: ./build.sh [OPTIONS] [-- MAVEN_OPTIONS]
 Description:
     Automates dependency resolution, compilation, testing, and packaging
     for IrScrutinizer on Linux and macOS (including ARM64 4K/16K page kernels).
+    If multiple or older packages are present, the newest package is selected
+    automatically by modification timestamp (mtime).
 
 Options:
     -h, --help            Show this help message and exit
@@ -364,11 +392,12 @@ fi
 # 6. Local Installation
 if [ "${ACTION_INSTALL}" = true ]; then
     log_info "Installing IrScrutinizer to /usr/local/share/irscrutinizer..."
-    BIN_ZIP="$(ls -1 "${TOP_DIR}/target"/IrScrutinizer-*-bin.zip 2>/dev/null | head -n 1 || true)"
+    BIN_ZIP="$(select_newest_package "${TOP_DIR}/target/IrScrutinizer-*-bin.zip" "Binary ZIP archive")"
     if [ -z "${BIN_ZIP}" ] || [ ! -f "${BIN_ZIP}" ]; then
         log_error "Binary distribution zip not found in target/. Run packaging first."
         exit 1
     fi
+    log_info "Installing package (selected by newest timestamp): $(basename "${BIN_ZIP}")"
     sudo mkdir -p /usr/local/share/irscrutinizer
     sudo unzip -o -q "${BIN_ZIP}" -d /usr/local/share/irscrutinizer
     (
@@ -380,7 +409,7 @@ fi
 
 # 7. Verification Run
 if [ "${ACTION_VERIFY_RUN}" = true ]; then
-    FAT_JAR="$(ls -1 "${TOP_DIR}/target"/IrScrutinizer-*-jar-with-dependencies.jar 2>/dev/null | head -n 1 || true)"
+    FAT_JAR="$(select_newest_package "${TOP_DIR}/target/IrScrutinizer-*-jar-with-dependencies.jar" "Executable Fat JAR")"
     if [ -n "${FAT_JAR}" ] && [ -f "${FAT_JAR}" ]; then
         log_info "Verifying built application with 'java -jar ${FAT_JAR} --version'..."
         java -jar "${FAT_JAR}" --version
@@ -395,31 +424,36 @@ echo -e "${COLOR_BOLD}                       Build Summary                      
 echo -e "${COLOR_CYAN}================================================================${COLOR_RESET}"
 echo -e " Tests Status:          ${COLOR_GREEN}${TESTS_STATUS}${COLOR_RESET}"
 
-FAT_JAR="$(ls -1 "${TOP_DIR}/target"/IrScrutinizer-*-jar-with-dependencies.jar 2>/dev/null | head -n 1 || true)"
+FAT_JAR="$(select_newest_package "${TOP_DIR}/target/IrScrutinizer-*-jar-with-dependencies.jar" "Executable Fat JAR")"
 if [ -n "${FAT_JAR}" ] && [ -f "${FAT_JAR}" ]; then
     JAR_SIZE="$(du -h "${FAT_JAR}" | cut -f1)"
     echo -e " Executable Fat JAR:   ${COLOR_BOLD}${FAT_JAR}${COLOR_RESET} (${JAR_SIZE})"
 fi
 
-BIN_ZIP="$(ls -1 "${TOP_DIR}/target"/IrScrutinizer-*-bin.zip 2>/dev/null | head -n 1 || true)"
+BIN_ZIP="$(select_newest_package "${TOP_DIR}/target/IrScrutinizer-*-bin.zip" "Binary ZIP")"
 if [ -n "${BIN_ZIP}" ] && [ -f "${BIN_ZIP}" ]; then
     ZIP_SIZE="$(du -h "${BIN_ZIP}" | cut -f1)"
     echo -e " Binary ZIP Archive:    ${COLOR_BOLD}${BIN_ZIP}${COLOR_RESET} (${ZIP_SIZE})"
 fi
 
-DMG_FILE="$(ls -1 "${TOP_DIR}/target"/IrScrutinizer-*-macOS.dmg 2>/dev/null | head -n 1 || true)"
+DMG_FILE="$(select_newest_package "${TOP_DIR}/target/IrScrutinizer-*-macOS.dmg" "macOS DMG")"
 if [ -n "${DMG_FILE}" ] && [ -f "${DMG_FILE}" ]; then
     DMG_SIZE="$(du -h "${DMG_FILE}" | cut -f1)"
     echo -e " macOS DMG:             ${COLOR_BOLD}${DMG_FILE}${COLOR_RESET} (${DMG_SIZE})"
 fi
 
 if [ -d "${TOP_DIR}/target/packages" ]; then
-    for pkg in "${TOP_DIR}/target/packages"/*; do
-        if [ -f "${pkg}" ]; then
-            PKG_SIZE="$(du -h "${pkg}" | cut -f1)"
-            echo -e " Linux Package:         ${COLOR_BOLD}${pkg}${COLOR_RESET} (${PKG_SIZE})"
-        fi
-    done
+    NEWEST_RPM="$(select_newest_package "${TOP_DIR}/target/packages/*.rpm" "RPM package")"
+    if [ -n "${NEWEST_RPM}" ] && [ -f "${NEWEST_RPM}" ]; then
+        RPM_SIZE="$(du -h "${NEWEST_RPM}" | cut -f1)"
+        echo -e " Linux RPM Package:     ${COLOR_BOLD}${NEWEST_RPM}${COLOR_RESET} (${RPM_SIZE})"
+    fi
+
+    NEWEST_DEB="$(select_newest_package "${TOP_DIR}/target/packages/*.deb" "Debian package")"
+    if [ -n "${NEWEST_DEB}" ] && [ -f "${NEWEST_DEB}" ]; then
+        DEB_SIZE="$(du -h "${NEWEST_DEB}" | cut -f1)"
+        echo -e " Linux DEB Package:     ${COLOR_BOLD}${NEWEST_DEB}${COLOR_RESET} (${DEB_SIZE})"
+    fi
 fi
 
 echo -e "${COLOR_CYAN}================================================================${COLOR_RESET}"
